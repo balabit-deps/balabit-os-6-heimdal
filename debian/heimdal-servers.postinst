@@ -1,0 +1,37 @@
+#!/bin/sh -e
+
+add_servers() {
+kshell_entry="kshell	stream	tcp	nowait	root	/usr/sbin/tcpd /usr/lib/heimdal-servers/rshd -k"
+   ftp_entry="ftp	stream	tcp	nowait	root	/usr/sbin/tcpd /usr/lib/heimdal-servers/ftpd -a plain"
+
+	update-inetd --group KRB5 --add "$kshell_entry"
+	update-inetd --group KRB5 --add "$ftp_entry"
+}
+
+enable_servers() {
+	update-inetd --pattern '[ \t]/usr/lib/heimdal-servers/ftpd' --enable ftp
+}
+
+remove_servers() {
+	update-inetd --remove 'ftp[ \t].*[ \t]/usr/lib/heimdal-servers/ftpd'
+}
+
+case "$1" in
+abort-upgrade | abort-deconfigure | abort-remove)
+	enable_servers
+	;;
+configure)
+	if [ -n "$2" ] && dpkg --compare-versions "$2" ge 0.3e-4; then
+		enable_servers
+	else
+		remove_servers
+		add_servers
+	fi
+	;;
+*)
+	printf "$0: incorrect arguments: $*\n" >&2
+	exit 1
+	;;
+esac
+
+#DEBHELPER#

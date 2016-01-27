@@ -1,0 +1,23 @@
+#!/bin/bash -e
+# Build an orig.tar.gz file from a git snapshot
+# See also http://www.h5l.org/sources.html
+
+if [ -z "$1" ]; then
+	version=$( dpkg-parsechangelog -l`dirname $0`/../changelog | sed -n 's/^Version: \(.*:\|\)//p' | sed 's/-[0-9.]\+$//' )
+else
+	version="$1"
+fi
+if [ -z "$2" ]; then
+	branch=master
+else
+	branch="$2"
+fi
+scriptdir=`dirname $0`
+
+CHECKOUT_DIR="heimdal-$version"
+git clone --depth 1 -l git://github.com/heimdal/heimdal "$CHECKOUT_DIR"
+cd "$CHECKOUT_DIR" && git checkout "$BRANCH" && cd ..
+`dirname $0`/fix_git_source "$CHECKOUT_DIR"
+rm -rf "$CHECKOUT_DIR/.git"
+tar cz "$CHECKOUT_DIR" > "heimdal_$version.orig.tar.gz"
+rm -rf "$CHECKOUT_DIR"

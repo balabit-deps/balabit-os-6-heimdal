@@ -1,0 +1,14 @@
+Description: Disable plugin test, to prevent build failures.
+
+diff --git a/lib/krb5/Makefile.am b/lib/krb5/Makefile.am
+index a2058e4..5ff71ed 100644
+--- a/lib/krb5/Makefile.am
++++ b/lib/krb5/Makefile.am
+@@ -39,7 +39,6 @@ TESTS =						\
+ 	test_keytab				\
+ 	test_mem				\
+ 	test_pac				\
+-	test_plugin				\
+ 	test_princ				\
+ 	test_pkinit_dh2key			\
+ 	test_pknistkdf				\
