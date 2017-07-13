@@ -16,3 +16,4 @@ installsh
 060_no_build_string
 parallel-build-dependencies
 061_disable_test_plugin
+CVE-2017-11103.patch
